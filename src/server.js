@@ -33,9 +33,9 @@ app.use(signupRouter);
 app.use(invalidLogin);
 //app.use(internalServerError);
 
-function start(port) {
+function start(port, mongoDB) {
     if (port) {
-        mongoose.connect('mongodb://localhost:27017/auth', { useNewUrlParser: true, useUnifiedTopology: true })
+        mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
             .then(() => {
                 app.listen(port, () => console.log('Server is up on port ', port));
             })
