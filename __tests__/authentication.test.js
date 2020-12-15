@@ -30,12 +30,25 @@ describe('Web Server', () => {
 
     });
 
+    it('Should not sign up an invalid user', async () => {
+        const newUser = { "username": "foo", "password": "" };
+        let response = await agent.post('/signup').send(newUser);
+        expect(response.status).toEqual(403);
+
+    });
+
     it('Should sign in a valid user', async () => {
 
         let response = await agent.post('/signin').auth("foo", "bar");
-
-        //console.log(response);
         expect(response.status).toEqual(200);
+    })
+
+    it('Should not sign in an invalid user', async () => {
+
+        let response = await agent.post('/signin').auth("foo", "bars");
+        console.log(response.body)
+        expect(response.body.statusCode).toEqual(403);
+        //TODO: Figure out how to consume the error here. 
     })
 
 });
