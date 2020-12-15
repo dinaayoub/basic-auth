@@ -2,15 +2,12 @@
 
 // 3rd Party Resources
 const express = require('express');
-const bcrypt = require('bcrypt');
-const base64 = require('base-64');
 const mongoose = require('mongoose');
 const signinRouter = require('./routes/signin');
 const signupRouter = require('./routes/signup');
 const cors = require('cors');
 const notFoundError = require('./error-handlers/404');
-const invalidLogin = require('./error-handlers/403');
-//const internalServerError = require('./error-handlers/500');
+const internalServerError = require('./error-handlers/500');
 
 // Prepare the express app
 const app = express();
@@ -29,9 +26,8 @@ app.use(signinRouter);
 app.use(signupRouter);
 
 //error handling
-//app.use('*', notFoundError);
-app.use(invalidLogin);
-//app.use(internalServerError);
+app.use('*', notFoundError);
+app.use(internalServerError);
 
 function start(port, mongoDB) {
     if (port) {

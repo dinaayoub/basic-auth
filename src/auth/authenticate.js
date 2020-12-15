@@ -1,11 +1,8 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
 const base64 = require('base-64');
-const mongoose = require('mongoose');
-const userSchema = require('../mongo/userSchema');
-const Users = mongoose.model('users', userSchema);
-
+const Users = require('../mongo/userSchema')
+const invalidLogin = require('../error-handlers/403');
 
 async function signIn(req, res, next) {
     /*
@@ -17,7 +14,6 @@ async function signIn(req, res, next) {
         - Split on ':' to turn it into an array
         - Pull username and password from that array
     */
-
     let basicHeaderParts = req.headers.authorization.split(' ');  // ['Basic', 'sdkjdsljd=']
     let encodedString = basicHeaderParts.pop();  // sdkjdsljd=
     let decodedString = base64.decode(encodedString); // "username:password"
@@ -31,18 +27,12 @@ async function signIn(req, res, next) {
       3. Either we're valid or we throw an error
     */
     try {
-        const user = await Users.findOne({ username: username })
-        const valid = await bcrypt.compare(password, user.password);
-        if (valid) {
-            next();
-        }
-        else {
-            next('Invalid User');
-        }
+        //this is what middleware is really good at: adding stuff to the req! 
+        req.user = await Users.authenticateBasic(username, password);
     } catch (error) {
-        next("Invalid Login");
+        invalidLogin('Invalid login', req, res, next);
     }
-
+    next();
 }
 
 module.exports = signIn;
