@@ -6,7 +6,7 @@ function internalServerError(error, req, res, next) {
         statusCode: 500,
         message: 'Internal Server Error - ' + (error.message ? error.message : error)
     }
-    res.status(404).json(errorObject);
+    res.status(500).json(errorObject);
 }
 
 module.exports = internalServerError;
